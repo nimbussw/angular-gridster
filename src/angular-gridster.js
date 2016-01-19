@@ -2200,7 +2200,7 @@
 					}
 
 					var debouncedTransitionEndPublisher = gridsterDebounce(function(e) {
-						if (!!angular.element(e.srcElement).attr('gridster-item')) {
+						if (!!angular.element(e.target).attr('gridster-item')) {
 							scope.$apply(function() {
 								scope.$broadcast('gridster-item-transition-end', item);
 							});
