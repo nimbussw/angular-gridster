@@ -1387,12 +1387,11 @@
 					mOffY = 0,
 
 					minTop = 0,
-					maxTop = 9999,
 					minLeft = 0,
 					realdocument = $document[0];
 
 				var originalCol, originalRow;
-				var inputTags = ['select', 'input', 'textarea', 'button'];
+				var inputTags = ['select', 'option', 'input', 'textarea', 'button'];
 
 				function mouseDown(e) {
 					if (inputTags.indexOf(e.target.nodeName.toLowerCase()) !== -1) {
@@ -1414,6 +1413,33 @@
 					// only works if you have jQuery
 					if ($target.closest && $target.closest('.gridster-no-drag').length) {
 						return false;
+					}
+
+					// apply drag handle filter
+					if (gridster.draggable && gridster.draggable.handle) {
+						var $dragHandles = angular.element($el[0].querySelectorAll(gridster.draggable.handle));
+						var match = false;
+						outerloop:
+							for (var h = 0, hl = $dragHandles.length; h < hl; ++h) {
+								var handle = $dragHandles[h];
+								if (handle === e.target) {
+									match = true;
+									break;
+								}
+								for (var p = 0; p < 20; ++p) {
+									var parent = e.target.parentNode;
+									if (parent === $el[0]) {
+										break;
+									}
+									if (parent === handle) {
+										match = true;
+										break outerloop;
+									}
+								}
+							}
+						if (!match) {
+							return false;
+						}
 					}
 
 					switch (e.which) {
@@ -1453,7 +1479,8 @@
 					}
 
 					var maxLeft = gridster.curWidth - 1;
-
+					var maxTop = gridster.curRowHeight * gridster.maxRows - 1;
+					
 					// Get the current mouse position.
 					mouseX = e.pageX;
 					mouseY = e.pageY;
@@ -1529,8 +1556,8 @@
 						scrollSensitivity = gridster.draggable.scrollSensitivity,
 						scrollSpeed = gridster.draggable.scrollSpeed;
 
-					var row = gridster.pixelsToRows(elmY);
-					var col = gridster.pixelsToColumns(elmX);
+					var row = Math.min(gridster.pixelsToRows(elmY), gridster.maxRows - 1);
+					var col = Math.min(gridster.pixelsToColumns(elmX), gridster.columns - 1);
 
 					var itemsInTheWay = gridster.getItems(row, col, item.sizeX, item.sizeY, item);
 					var hasItemsInTheWay = itemsInTheWay.length !== 0;
@@ -1601,8 +1628,8 @@
 
 				function dragStop(event) {
 					$el.removeClass('gridster-item-moving');
-					var row = gridster.pixelsToRows(elmY);
-					var col = gridster.pixelsToColumns(elmX);
+					var row = Math.min(gridster.pixelsToRows(elmY), gridster.maxRows - 1);
+					var col = Math.min(gridster.pixelsToColumns(elmX), gridster.columns - 1);
 					if (gridster.pushing !== false || gridster.getItems(row, col, item.sizeX, item.sizeY, item).length === 0) {
 						item.row = row;
 						item.col = col;
@@ -1618,43 +1645,21 @@
 				}
 
 				var enabled = null;
-				var $dragHandles = null;
-				var unifiedInputs = [];
+				var gridsterTouch = null;
 
 				this.enable = function() {
 					if (enabled === true) {
 						return;
 					}
-
 					enabled = true;
 
-					// timeout required for some template rendering
-					$el.ready(function() {
-						if (enabled !== true) {
-							return;
-						}
+					if (gridsterTouch) {
+						gridsterTouch.enable();
+						return;
+					}
 
-						// disable any existing draghandles
-						for (var u = 0, ul = unifiedInputs.length; u < ul; ++u) {
-							unifiedInputs[u].disable();
-						}
-						unifiedInputs = [];
-
-						if (gridster.draggable && gridster.draggable.handle) {
-							$dragHandles = angular.element($el[0].querySelectorAll(gridster.draggable.handle));
-							if ($dragHandles.length === 0) {
-								// fall back to element if handle not found...
-								$dragHandles = $el;
-							}
-						} else {
-							$dragHandles = $el;
-						}
-
-						for (var h = 0, hl = $dragHandles.length; h < hl; ++h) {
-							unifiedInputs[h] = new GridsterTouch($dragHandles[h], mouseDown, mouseMove, mouseUp);
-							unifiedInputs[h].enable();
-						}
-					});
+					gridsterTouch = new GridsterTouch($el[0], mouseDown, mouseMove, mouseUp);
+					gridsterTouch.enable();
 				};
 
 				this.disable = function() {
@@ -1663,12 +1668,9 @@
 					}
 
 					enabled = false;
-
-					for (var u = 0, ul = unifiedInputs.length; u < ul; ++u) {
-						unifiedInputs[u].disable();
+					if (gridsterTouch) {
+						gridsterTouch.disable();
 					}
-
-					unifiedInputs = [];
 				};
 
 				this.toggle = function(enabled) {
