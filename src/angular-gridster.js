@@ -1426,15 +1426,13 @@
 									match = true;
 									break;
 								}
-								for (var p = 0; p < 20; ++p) {
-									var parent = e.target.parentNode;
-									if (parent === $el[0]) {
-										break;
-									}
-									if (parent === handle) {
-										match = true;
-										break outerloop;
-									}
+								var parent = e.target.parentNode;
+								if (parent === $el[0]) {
+									break;
+								}
+								if (parent === handle) {
+									match = true;
+									break outerloop;
 								}
 							}
 						if (!match) {
@@ -1480,7 +1478,7 @@
 
 					var maxLeft = gridster.curWidth - 1;
 					var maxTop = gridster.curRowHeight * gridster.maxRows - 1;
-					
+
 					// Get the current mouse position.
 					mouseX = e.pageX;
 					mouseY = e.pageY;
