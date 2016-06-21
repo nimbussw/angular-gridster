@@ -2191,8 +2191,6 @@
 					}
 
 					scope.$watch(function() {
-						//return item.sizeY + ',' + item.sizeX + ',' + item.minSizeX + ',' + item.maxSizeX + ',' + item.minSizeY + ',' + item.maxSizeY;
-						// TODO: Review (above = master) (below = auto-height)
 						return item.sizeY + ',' + item.getSizeY() + ',' + item.getSizeX() + ',' + item.minSizeX + ',' + item.maxSizeX + ',' + item.minSizeY + ',' + item.maxSizeY;
 					}, sizeChanged);
 
