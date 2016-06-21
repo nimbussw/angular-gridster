@@ -1426,13 +1426,17 @@
 									match = true;
 									break;
 								}
-								var parent = e.target.parentNode;
-								if (parent === $el[0]) {
-									break;
-								}
-								if (parent === handle) {
-									match = true;
-									break outerloop;
+								var target = e.target;
+								for (var p = 0; p < 20; ++p) {
+									var parent = target.parentNode;
+									if (parent === $el[0]) {
+										break;
+									}
+									if (parent === handle) {
+										match = true;
+										break outerloop;
+									}
+									target = parent;
 								}
 							}
 						if (!match) {
