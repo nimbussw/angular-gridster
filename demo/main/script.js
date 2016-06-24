@@ -181,9 +181,9 @@ angular.module('app')
 
 	$scope.noSparseGridsterOpts = {
 		sparse: true,
-		pushing: true,
-		floating: true,
-		swapping: true,
+		pushing: false,
+		floating: false,
+		swapping: false,
 		width: 'auto',
 		columns: 24,
 		colWidth: 'auto',

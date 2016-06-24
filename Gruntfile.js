@@ -1,5 +1,3 @@
-'use_strict';
-
 module.exports = function(grunt) {
 
 	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
@@ -49,7 +47,8 @@ module.exports = function(grunt) {
 		},
 		jshint: {
 			options: {
-				jshintrc: '.jshintrc'
+				jshintrc: '.jshintrc',
+				reporterOutput: ''
 			},
 			files: ['src/*.js', 'test/**/*.js']
 		},
