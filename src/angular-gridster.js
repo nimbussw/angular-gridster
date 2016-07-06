@@ -611,10 +611,10 @@
 				}
 
 				if (ceilOrFloor === true) {
-					pixels -= this.margins[0];
+					pixels -= this.margins[1] > 0 ? this.margins[1] - gridster.rowHeight * 0.5 : gridster.rowHeight * 0.5;
 					return Math.ceil(pixels / this.curColWidth);
 				} else if (ceilOrFloor === false) {
-					pixels += this.margins[0];
+					pixels += this.margins[1] > 0 ? this.margins[1] + gridster.rowHeight * 0.5 : gridster.rowHeight * 0.5;
 					return Math.floor(pixels / this.curColWidth);
 				}
 

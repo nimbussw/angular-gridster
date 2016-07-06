@@ -193,7 +193,7 @@ angular.module('app')
 		maxRows: 1000,
 		defaultSizeX: 6,
 		defaultSizeY: 7,
-		margins: [8, 8],
+		margins: [0, 0],
 		outerMargin: true,
 		mobileBreakPoint: 512,
 		mobileModeEnabled: true,
